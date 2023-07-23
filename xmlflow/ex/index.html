@@ -1,0 +1,50 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="https://cdn.rawgit.com/mmaltsev/Xml2Tree/master/src/css/style.css">
+        <script src="https://cdn.rawgit.com/mmaltsev/Xml2Tree/master/src/xml2tree_d3.min.js"></script>
+    </head>
+    <body>
+        <div id="xml">
+
+<!-- XML BEGIN -->
+<x id="updates">
+    <nodes>
+        <A1/>
+        <ignore2>
+            <ignore4/>
+        </ignore2>
+        <ignore3/>
+    </nodes>
+    <ids>
+        <A2/>
+    </ids>
+    <leaf></leaf>
+    <ignore>
+        <leaf2/>
+    </ignore>
+    <A>
+        <delete-ids></delete-ids>
+    </A>
+</x>
+<!-- XML END -->
+
+        </div>
+        <div id="chart1"></div>
+        <script>
+            window.readTextFile = function(file) { return `<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>${document.getElementById('xml').innerHTML}`; }
+            xml2tree("chart1", "file.js", [], false, false);
+            let interval = setInterval(() => {
+                let count = 0;
+                
+                [...document.getElementsByClassName("node")].forEach((nd) => {
+                    if (window.getComputedStyle(nd.querySelectorAll('circle')[0]).fill !== 'rgb(255, 255, 255)') {
+                        nd.dispatchEvent(new Event("click"));
+                        count += 1;
+                    }
+                });
+                if (count == 0) clearInterval(interval);
+            }, 1500);
+        </script>
+
+    </body>
+</html>

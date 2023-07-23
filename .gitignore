@@ -1,0 +1,7 @@
+# Emacs autosave files
+\#*\#
+.\#*
+*~
+
+# node
+node_modules/
