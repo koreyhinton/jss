@@ -1,5 +1,23 @@
 {
   "dependencies": {
     "xml2js": "^0.6.0"
-  }
+  },
+  "name": "xmlflow",
+  "version": "0.0.0",
+  "main": "xmlflow.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/koreyhinton/jss.git"
+  },
+  "author": "Korey Hinton",
+  "license": "AGPL-3.0",
+  "bugs": {
+    "url": "https://github.com/koreyhinton/jss/issues"
+  },
+  "homepage": "https://github.com/koreyhinton/jss#readme",
+  "description": ""
 }

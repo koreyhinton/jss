@@ -92,7 +92,7 @@ function xmlflow(xml, env) {
         });
     });
 }
-
+/*
 let env = {};
 env.nds = function(){console.log('nds()'); return [{id:1},{id:2},{id:3}];}
 env.ids = function(){console.log('ids()'); return [2,1];}
@@ -121,5 +121,5 @@ foobar
 <A><delete-ids></delete-ids><del2></del2></A>
 foo
 </xmlflow>`, env);
-
+*/
 module.exports = xmlflow;
