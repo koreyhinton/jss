@@ -6,6 +6,12 @@ function xmlflow__vec1(vector) {
     };
 }
 
+function xmlflow__vec4(vectors) {
+    return {
+        vector1: vectors.vector1, vector2: vectors.vector2, vector3: vectors.vector3, vector4: vectors.vector4
+    };
+}
+
 function xmlflow__handleconnector(name, node, vectors, connectors) {
     let isConnector = (/^[A-Z][0-9]?$/i.test(name));
     if (isConnector) {
@@ -21,9 +27,9 @@ function xmlflow__handleconnector(name, node, vectors, connectors) {
 }
 
 function xmlflow__handlenonflow(funcNm, funcNode, vectors, env) {
-    if (funcNm == "_") {
-        console.warn("WARNING: skipping non-flowing input xml content " +
-            `(name: ${funcNm})`);
+    if (funcNm == "_" || funcNm == '$') {
+        /*console.warn("WARNING: skipping non-flowing input xml content " +
+            `(name: ${funcNm})`);*/
         return true; // early-return for text content and leaf input nodes
     } // end non-node check
     return false;
@@ -40,6 +46,26 @@ function xmlflow__recurse(funcNm, funcNode, vectors, connectors, env) {
 
     //console.log(`funcNm = (${funcNm}), funcNode=${funcNode}`,funcNode);
     //console.log('will run func ' + funcNm, funcNode, typeof funcNode, funcNode == '', vectors);
+
+    // todo: find a better way to handle xml attributes (something better than
+    //       just placing it in place of first null vector 1 thru 4)
+    if (vectors.vector1 == null && funcNode['$'] != null) vectors.vector1 = funcNode['$'];
+    else if (vectors.vector2 == null && funcNode['$'] != null) vectors.vector2 = funcNode['$'];
+    else if (vectors.vector3 == null && funcNode['$'] != null) vectors.vector3 = funcNode['$'];
+    else if (vectors.vector4 == null && funcNode['$'] != null) vectors.vector4 = funcNode['$'];
+
+    // console.warn('will run', funcNm,funcNode['$'],funcNode,vectors.vector1, vectors.vector2,vectors.vector3, vectors.vector4);
+
+    if (Array.isArray(funcNode)) {
+        // console.warn('is array', funcNode);
+        // Array happens when there are 2 sibling tags with the same name
+        funcNode.forEach((realFuncNode) => {
+            // console.warn('iterate', funcNm, realFuncNode);
+            let vecs = xmlflow__vec4(vectors);
+            xmlflow__recurse(funcNm, realFuncNode, vecs, connectors, env);
+        });
+        return;
+    }
 
     let vector1 = env[funcNm](vectors.vector1, vectors.vector2,
         vectors.vector3, vectors.vector4);
@@ -68,13 +94,15 @@ function xmlflow(xml, env) {
         innerXmlObj = res.xmlflow;
         parsed = true;
     });
-    // todo: append to env, ie: last()
+    env.last = (vectorIn) => vectorIn[vectorIn.length-1];
+    env['dom-stream'] = ({id}) => window.document.getElementById(id);
+    // todo: append additional functions to env
     if (!parsed) { console.error("Parsing failed"); return; }
 
     let connectors = {};
     // let inpVecs = {};
     // let flows = {};
-    let vectors = xmlflow__vec1([]);
+    let vectors = xmlflow__vec1(null);//[]);
     let rootFn = "xmlflow--root";
     env[rootFn] = (vector1)=>{return vector1};
     xmlflow__recurse(rootFn, innerXmlObj, vectors, connectors, env);
